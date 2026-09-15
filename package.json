@@ -4,7 +4,7 @@
   "description": "Notifica Telegram quando cambia la tariffa OctopusFissa 12M.",
   "type": "module",
   "engines": {
-    "node": ">=18.17"
+    "node": ">=24"
   },
   "scripts": {
     "scrape": "node src/scrape.js",
