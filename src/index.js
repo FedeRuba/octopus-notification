@@ -65,7 +65,25 @@ function formatOldNew(previous, current, section, field, unit) {
   return `${oldText} -> ${formatEuro(current[section][field], unit)}`;
 }
 
+function formatCurrent(current, section, field, unit) {
+  return formatEuro(current[section][field], unit);
+}
+
 function buildMessage(previous, current) {
+  if (!hasPreviousPrices(previous)) {
+    return [
+      '<b>Primo controllo tariffa OctopusFissa 12M</b>',
+      '',
+      `Luce materia prima: ${formatCurrent(current, 'luce', 'materiaPrima', 'kWh')}`,
+      `Luce commercializzazione: ${formatCurrent(current, 'luce', 'commercializzazione', 'mese')}`,
+      `Gas materia prima: ${formatCurrent(current, 'gas', 'materiaPrima', 'Smc')}`,
+      `Gas commercializzazione: ${formatCurrent(current, 'gas', 'commercializzazione', 'mese')}`,
+      '',
+      `Controllato: ${new Date(current.checkedAt).toLocaleString('it-IT', { timeZone: 'Europe/Rome' })}`,
+      TARIFFE_URL
+    ].join('\n');
+  }
+
   const title = hasPreviousPrices(previous)
     ? 'Variazione tariffa OctopusFissa 12M'
     : 'Primo controllo tariffa OctopusFissa 12M';
