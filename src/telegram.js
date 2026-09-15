@@ -1,6 +1,21 @@
 import { readFile } from 'node:fs/promises';
 
 const TELEGRAM_API_BASE = 'https://api.telegram.org';
+const TELEGRAM_TIMEOUT_MS = 15000;
+
+async function fetchTelegram(url, options) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TELEGRAM_TIMEOUT_MS);
+
+  try {
+    return await fetch(url, {
+      ...options,
+      signal: controller.signal
+    });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
 
 function getTelegramConfig() {
   const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -16,7 +31,7 @@ function getTelegramConfig() {
 export async function sendTelegramMessage(text) {
   const { token, chatId } = getTelegramConfig();
 
-  const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
+  const response = await fetchTelegram(`${TELEGRAM_API_BASE}/bot${token}/sendMessage`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -47,7 +62,7 @@ export async function sendTelegramPhoto(fileUrl, caption) {
     formData.append('caption', caption);
   }
 
-  const response = await fetch(`${TELEGRAM_API_BASE}/bot${token}/sendPhoto`, {
+  const response = await fetchTelegram(`${TELEGRAM_API_BASE}/bot${token}/sendPhoto`, {
     method: 'POST',
     body: formData
   });

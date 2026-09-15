@@ -4,6 +4,7 @@ import { load } from 'cheerio';
 export const TARIFFE_URL = 'https://octopusenergy.it/offerta/tariffe';
 
 const USER_AGENT = 'Mozilla/5.0 (compatible; OctopusTariffMonitor/1.0; +https://github.com/actions)';
+const FETCH_TIMEOUT_MS = 15000;
 
 function parseItalianNumber(value) {
   return Number(value.replace(',', '.'));
@@ -65,12 +66,16 @@ export function parseOctopusFissa(html) {
 }
 
 export async function scrapeOctopusFissa() {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FETCH_TIMEOUT_MS);
+
   const response = await fetch(TARIFFE_URL, {
+    signal: controller.signal,
     headers: {
       'User-Agent': USER_AGENT,
       Accept: 'text/html,application/xhtml+xml'
     }
-  });
+  }).finally(() => clearTimeout(timeout));
 
   if (!response.ok) {
     throw new Error(`Fetch tariffe fallita: HTTP ${response.status}`);
