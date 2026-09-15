@@ -1,0 +1,19 @@
+{
+  "name": "octopus-notification",
+  "version": "1.0.0",
+  "description": "Notifica Telegram quando cambia la tariffa OctopusFissa 12M.",
+  "type": "module",
+  "engines": {
+    "node": ">=18.17"
+  },
+  "scripts": {
+    "scrape": "node src/scrape.js",
+    "check": "node src/index.js",
+    "test:telegram": "node src/test-telegram.js",
+    "test:chart": "node src/test-chart.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0",
+    "pngjs": "^7.0.0"
+  }
+}
